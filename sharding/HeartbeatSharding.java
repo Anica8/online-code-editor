@@ -8,19 +8,23 @@ public class HeartbeatSharding {
     private static Connection db2Connection;
 
     public static void main(String[] args) {
-        
+        try {
         init();
 
-        int userId[]={90, 80, 70};
+        int userIds[]={90, 80, 70};
 
         for (int userId : userIds) {
             Connection conn = getShardConnection(userId);
+            System.out.println(conn.getCatalog());
         }
-
-        closeConnections();
+            closeConnections();
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+        }
     }
     
-    private static void init(){
+    private static void init() throws SQLException{
         String url1="jdbc:mysql://localhost:3306/heartbeat_db1";
         String url2="jdbc:mysql://localhost:3306/heartbeat_db2";
         String user="";
@@ -34,7 +38,7 @@ public class HeartbeatSharding {
         return (userId%2==0) ? db1Connection : db2Connection;
     }
 
-    private static void closeConnections throws SQLException(Connection conn){
+    private static void closeConnections() throws SQLException{
         if(db1Connection!=null) db1Connection.close();
         if(db2Connection!=null) db2Connection.close(); 
     } 
